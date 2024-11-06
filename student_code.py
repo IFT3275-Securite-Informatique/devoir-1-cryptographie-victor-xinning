@@ -3,6 +3,7 @@
 
 # Solution a la question 2
 
+import string
 import requests
 from collections import Counter
 
@@ -32,7 +33,7 @@ def load_text_from_web(url):
 
 # From a given text, returns a list of the its unique caracters + bicaracters
 def obtain_symbols(text):
-  caracteres = list(set(list(text)))  # Set of unique characters in the text
+  caracteres = list(set(c for c in text if c.isprintable() or c == "\n"))
   nb_bicaracteres = 256 - len(caracteres)
   bicaracteres = [item for item, _ in Counter(cut_string_into_pairs(text)).most_common(nb_bicaracteres)]
   symboles = caracteres + bicaracteres
