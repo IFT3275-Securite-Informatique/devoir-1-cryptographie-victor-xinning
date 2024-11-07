@@ -33,10 +33,9 @@ def load_text_from_web(url):
 
 # From a given text, returns a list of the its unique caracters + bicaracters
 def obtain_symbols(text):
-  caracteres = list(set(c for c in text if c.isprintable() or c == "\n"))
-  cleaned_text = ''.join(c for c in text if c.isprintable() or c == "\n")
+  caracteres = list(set(list(text)))  # Set of unique characters in the text
   nb_bicaracteres = 256 - len(caracteres)
-  bicaracteres = [item for item, _ in Counter(cut_string_into_pairs(cleaned_text)).most_common(nb_bicaracteres)]
+  bicaracteres = [item for item, _ in Counter(cut_string_into_pairs(text)).most_common(nb_bicaracteres)]
   symboles = caracteres + bicaracteres
 
   return symboles
@@ -94,6 +93,33 @@ def tabulate_encoded_symbols(split_cryptogram, symbols_dict):
   return symbols_dict
 
 
+# Function that returns the most evenly distributed symbol from a list of symbols
+def find_newline_symbol(symbols):
+  # Step 1: Count symbol frequencies
+  symbol_positions = defaultdict(list)
+  for i, symbol in enumerate(symbols):
+    symbol_positions[symbol].append(i)
+  
+  # Step 2: Calculate intervals
+  symbol_intervals = {}
+  for symbol, positions in symbol_positions.items():
+    intervals = [positions[i+1] - positions[i] for i in range(len(positions) - 1)]
+    symbol_intervals[symbol] = intervals
+  
+  # Step 3: Analyze distribution
+  most_evenly_distributed_symbol = None
+  smallest_variance = float('inf')
+  
+  for symbol, intervals in symbol_intervals.items():
+    if len(intervals) > 1:
+      mean_interval = sum(intervals) / len(intervals)
+      variance = sum((x - mean_interval) ** 2 for x in intervals) / len(intervals)
+      if variance < smallest_variance:
+        smallest_variance = variance
+        most_evenly_distributed_symbol = symbol
+  
+  return most_evenly_distributed_symbol
+
 #=============================================================================================#
 # Main decryption function ===================================================================#
 #=============================================================================================#
@@ -122,12 +148,39 @@ def decrypt(C):
   cryptogram_counter = tabulate_encoded_symbols(split_cryptogram, cryptogram_counter)
   text_counter = tabulate_symbols_in_text(text, text_counter)
 
+
+
+  # Searching for the most evenly distributed symbol in the cryptogram (=newline)
+  newline_symbol = find_newline_symbol(split_cryptogram)
+
+  # Map that symbol with the most present newline ('\r\n', 11625)
+  statistical_key = {}
+  statistical_key[newline_symbol] = '\r\n'
+
+  del text_counter['\r\n']
+  del cryptogram_counter[newline_symbol]
+
+  
+
+
+
+
+
   # Sort the values of the counter in descending order
   sorted_cryptogram_counter = sorted(cryptogram_counter.items(), key=lambda x: x[1], reverse=True)
   sorted_text_counter = sorted(text_counter.items(), key=lambda x: x[1], reverse=True)
 
+  print(sorted_text_counter)
+
+  #sorted_text_counter.remove(('\r\n', 11625))
+  print(sorted_text_counter)
+
+  
+  print(newline_symbol)
+  #print(cryptogram_counter[newline_symbol])
+
   # Create a "statistical" key based on the words frenquency where (k,v)=(crypted_symbol,text_symbol)
-  statistical_key = {}
+  
   for i in range(len(sorted_cryptogram_counter)):
       crypted_symbol, _ = sorted_cryptogram_counter[i]
       text_symbol, _ = sorted_text_counter[i]
