@@ -3,9 +3,12 @@
 
 # Solution a la question 2
 
-import string
+import math
+import random as rnd
+import numpy as np
 import requests
-from collections import Counter
+import string
+from collections import Counter, defaultdict
 
 #=============================================================================================#
 # Functions defined in (or inspired from) the homework instructions ==========================#
