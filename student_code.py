@@ -537,7 +537,7 @@ def decrypt(C):
   # Get the best key
   crypted_symbols_ranking = [symbol_and_count[0] for symbol_and_count in sorted_cryptogram_counter]
   text_symbols_set = set(text_symbols)
-  best_key = optimize_key(split_cryptogram, statistical_key, bigram_text_counter, trigram_text_counter, crypted_symbols_ranking, text_symbols_set, 10000)
+  best_key = optimize_key(split_cryptogram, statistical_key, bigram_text_counter, trigram_text_counter, crypted_symbols_ranking, text_symbols_set, 50000)
 
   # Decrypt using the best key
   M = []
