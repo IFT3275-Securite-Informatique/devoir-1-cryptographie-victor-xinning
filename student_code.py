@@ -162,7 +162,7 @@ def tabulate_encoded_symbols(split_cryptogram, symbols_dict):
 
 
 # Scoring system using birams and trigrams
-def compute_score(text, text_symbols_set, bigram_frequencies, trigram_frequencies, french_words):
+def compute_score(text, text_symbols_set, bigram_frequencies, trigram_frequencies):
   score = 0
 
   text_length = len(text)
