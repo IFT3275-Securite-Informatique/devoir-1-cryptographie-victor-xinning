@@ -263,7 +263,7 @@ def optimize_key(split_cryptogram, initial_key, bigram_frequencies, trigram_freq
       best_key = randomized_key.copy()
       current_key = randomized_key.copy()
 
-  return best_key
+  return best_key, best_score
 
 
 # Function that randomly swaps two values while respecting a certain interval within a ranking of keys
@@ -539,7 +539,16 @@ def decrypt(C):
   # Get the best key
   crypted_symbols_ranking = [symbol_and_count[0] for symbol_and_count in sorted_cryptogram_counter]
   text_symbols_set = set(text_symbols)
-  best_key = optimize_key(split_cryptogram, statistical_key, bigram_text_counter, trigram_text_counter, crypted_symbols_ranking, text_symbols_set, 50000)
+  best_key = None
+  best_overall_score = 0
+
+  for _ in range(5):
+    key, score = optimize_key(split_cryptogram, statistical_key, bigram_text_counter, trigram_text_counter, crypted_symbols_ranking, text_symbols_set, 50000)
+    
+    # Keep the best score
+    if score > best_overall_score:
+      best_overall_score = score
+      best_key = key
 
   # Decrypt using the best key
   M = []
