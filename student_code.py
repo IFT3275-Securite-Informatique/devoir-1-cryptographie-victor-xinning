@@ -247,7 +247,7 @@ def optimize_key(split_cryptogram, initial_key, bigram_frequencies, trigram_freq
   for _ in range(iterations):
 
     # slightly randomize the key
-    randomized_key = swap_symbols(ranked_symbols_list, current_key.copy(), 7)
+    randomized_key = swap_symbols(ranked_symbols_list, current_key.copy(), 10)
     
     decrypted_text = []
     for crypted_symbol in split_cryptogram[:sample_size]:
