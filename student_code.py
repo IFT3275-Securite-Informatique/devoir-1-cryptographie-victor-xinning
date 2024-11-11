@@ -235,8 +235,10 @@ def optimize_key(split_cryptogram, initial_key, bigram_frequencies, trigram_freq
   current_key = initial_key.copy()
   best_key = current_key.copy()
 
+  sample_size = min(1500, len(split_cryptogram))
+
   decrypted_text = []
-  for crypted_symbol in split_cryptogram:
+  for crypted_symbol in split_cryptogram[:sample_size]:
     decrypted_text.append(best_key[crypted_symbol])
   decrypted_text = ''.join(decrypted_text)
 
@@ -245,10 +247,10 @@ def optimize_key(split_cryptogram, initial_key, bigram_frequencies, trigram_freq
   for _ in range(iterations):
 
     # slightly randomize the key
-    randomized_key = swap_symbols(ranked_symbols_list, current_key.copy(), 5)
+    randomized_key = swap_symbols(ranked_symbols_list, current_key.copy(), 10)
     
     decrypted_text = []
-    for crypted_symbol in split_cryptogram:
+    for crypted_symbol in split_cryptogram[:sample_size]:
       decrypted_text.append(randomized_key[crypted_symbol])
     decrypted_text = ''.join(decrypted_text)
 
